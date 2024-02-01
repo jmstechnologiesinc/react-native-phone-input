@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line import/no-extraneous-dependencies, no-use-before-define
 import {
-    Image, TextInput, TouchableOpacity, View
+    Image, TouchableOpacity, View
 } from 'react-native';
 import Country from './country';
 import Flags from './resources/flags';
@@ -8,6 +8,9 @@ import PhoneNumber from './PhoneNumber';
 import styles from './styles';
 import CountryPicker from './CountryPicker';
 import { ReactNativePhoneInputProps } from './typings';
+
+import { TextInput, Button } from '@jmstechnologiesinc/react-native-paper';
+import { moderateScale } from '@jmstechnologiesinc/react-native-size-matters';
 
 export default class PhoneInput<TextComponentType extends React.ComponentType = typeof TextInput>
     extends React.Component<ReactNativePhoneInputProps<TextComponentType>, any> {
@@ -219,66 +222,40 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
 
     render() {
         const { iso2, displayValue, disabled } = this.state;
+     
         const country = this.getAllCountries().find((c) => c.iso2 === iso2);
         const TextComponent: any = this.props.textComponent || TextInput;
         return (
-            <View style={[styles.container, this.props.style]}>
-                <TouchableOpacity
-                    onPress={this.onPressFlag}
-                    disabled={disabled}
-                    accessibilityRole="imagebutton"
-                    accessibilityLabel={country ? country.name : iso2}
-                >
-                    {this.props.renderFlag ? (
-                        <>
-                            {this.props.renderFlag({
-                                imageSource: Flags.get(iso2),
-                            })}
-                        </>
-                    ) : (
-                        <Image
-                            accessibilityIgnoresInvertColors={true}
-                            source={Flags.get(iso2)}
-                            style={[styles.flag, this.props.flagStyle]}
-                        />
-                    )}
-                </TouchableOpacity>
-                <View style={{ flex: 1, marginLeft: this.props.offset || 10 }}>
-                    <TextComponent
-                        ref={(ref) => {
-                            this.inputPhone = ref;
-                        }}
-                        accessibilityLabel={this.getAccessibilityLabel()}
-                        editable={!disabled}
-                        autoCorrect={false}
-                        style={[styles.text, this.props.textStyle]}
-                        onChangeText={(text) => {
-                            this.onChangePhoneNumber(text);
-                        }}
-                        keyboardType="phone-pad"
-                        underlineColorAndroid="rgba(0,0,0,0)"
-                        value={displayValue}
-                        {...this.props.textProps}
-                    />
-                </View>
+            <>
 
-                <CountryPicker
+                <TextInput
                     ref={(ref) => {
-                        this.picker = ref;
+                        this.inputPhone = ref;
                     }}
-                    selectedCountry={iso2}
-                    onSubmit={this.selectCountry}
-                    buttonColor={this.props.pickerButtonColor}
-                    cancelText={this.props.cancelText}
-                    cancelTextStyle={this.props.cancelTextStyle}
-                    confirmText={this.props.confirmText}
-                    confirmTextStyle={this.props.confirmTextStyle}
-                    pickerBackgroundColor={this.props.pickerBackgroundColor}
-                    itemStyle={this.props.pickerItemStyle}
-                    onPressCancel={this.props.onPressCancel}
-                    onPressConfirm={this.props.onPressConfirm}
+                    mode="outlined"
+                    label={"Phone Number"}
+                    accessibilityLabel={this.getAccessibilityLabel()}
+                    editable={!disabled}
+                    autoCorrect={false}
+                    onChangeText={(text) => {
+                        this.onChangePhoneNumber(text);
+                    }}
+                    left={
+                        <TextInput.Icon
+                            onPress={this.onPressFlag}
+                            icon={({ size }) => (
+                                <Image
+                                    source={Flags.get(iso2)}
+                                    style={{ width: moderateScale(size), height: moderateScale(size), }}
+                                    accessibilityIgnoresInvertColors
+                                />
+                            )}
+                        />
+                    }
+                    keyboardType="phone-pad"
+                    value={displayValue}
                 />
-            </View>
+            </>
         );
     }
 }
