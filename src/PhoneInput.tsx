@@ -1,15 +1,15 @@
 import React from 'react'; // eslint-disable-line import/no-extraneous-dependencies, no-use-before-define
 import {
-    Image, TouchableOpacity, View
+    Image, 
 } from 'react-native';
 import Country from './country';
 import Flags from './resources/flags';
 import PhoneNumber from './PhoneNumber';
-import styles from './styles';
-import CountryPicker from './CountryPicker';
+
 import { ReactNativePhoneInputProps } from './typings';
 
-import { TextInput, Button } from '@jmstechnologiesinc/react-native-paper';
+import { TextInput} from '@jmstechnologiesinc/react-native-paper';
+/* @ts-ignore */
 import { moderateScale } from '@jmstechnologiesinc/react-native-size-matters';
 
 export default class PhoneInput<TextComponentType extends React.ComponentType = typeof TextInput>
@@ -222,9 +222,6 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
 
     render() {
         const { iso2, displayValue, disabled } = this.state;
-     
-        const country = this.getAllCountries().find((c) => c.iso2 === iso2);
-        const TextComponent: any = this.props.textComponent || TextInput;
         return (
             <>
 
