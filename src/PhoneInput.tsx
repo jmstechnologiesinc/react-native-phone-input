@@ -229,7 +229,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
                     ref={(ref) => {
                         this.inputPhone = ref;
                     }}
-                    mode="outlined"
+                    mode="flat"
                     label={"Phone Number"}
                     accessibilityLabel={this.getAccessibilityLabel()}
                     editable={!disabled}
