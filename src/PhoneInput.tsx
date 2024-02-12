@@ -9,6 +9,7 @@ import PhoneNumber from './PhoneNumber';
 import { ReactNativePhoneInputProps } from './typings';
 
 import { TextInput} from '@jmstechnologiesinc/react-native-paper';
+
 /* @ts-ignore */
 import { moderateScale } from '@jmstechnologiesinc/react-native-size-matters';
 
@@ -26,7 +27,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
         super(props);
 
         let {
-            initialCountry, initialValue
+            initialCountry, initialValue, variant, inputActionHandler,
         } = this.props;
 
         const {
@@ -37,7 +38,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
             Country.setCustomCountriesData(countriesList);
         }
 
-        let displayValue = '';
+        let displayValue = ''
 
         if (initialValue) {
             if (initialValue[0] !== '+') {
@@ -57,6 +58,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
             iso2: initialCountry,
             displayValue,
             value: initialValue,
+            variant,
         };
     }
 
@@ -221,21 +223,31 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
     }
 
     render() {
-        const { iso2, displayValue, disabled } = this.state;
-        return (
+        const { iso2, displayValue, disabled, variant } = this.state;
+
+        
+
+       
+
+
+        return (    
             <>
 
                 <TextInput
                     ref={(ref) => {
                         this.inputPhone = ref;
                     }}
-                    mode="flat"
+                    mode={variant}
                     label={"Phone Number"}
                     accessibilityLabel={this.getAccessibilityLabel()}
                     editable={!disabled}
                     autoCorrect={false}
                     onChangeText={(text) => {
                         this.onChangePhoneNumber(text);
+                        if(this.props.inputActionHandler){
+                         
+                            this.props.inputActionHandler('phone', text)
+                        }
                     }}
                     left={
                         <TextInput.Icon
@@ -252,6 +264,8 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
                     keyboardType="phone-pad"
                     value={displayValue}
                 />
+
+             
             </>
         );
     }
