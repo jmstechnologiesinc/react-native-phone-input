@@ -27,7 +27,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
         super(props);
 
         let {
-            initialCountry, initialValue, variant, inputActionHandler,
+            initialCountry, initialValue, mode, inputActionHandler,
         } = this.props;
 
         const {
@@ -58,7 +58,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
             iso2: initialCountry,
             displayValue,
             value: initialValue,
-            variant,
+            mode,
         };
     }
 
@@ -223,7 +223,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
     }
 
     render() {
-        const { iso2, displayValue, disabled, variant } = this.state;
+        const { iso2, displayValue, disabled, mode } = this.state;
 
         
 
@@ -237,7 +237,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
                     ref={(ref) => {
                         this.inputPhone = ref;
                     }}
-                    mode={variant}
+                    mode={mode}
                     label={"Phone Number"}
                     accessibilityLabel={this.getAccessibilityLabel()}
                     editable={!disabled}

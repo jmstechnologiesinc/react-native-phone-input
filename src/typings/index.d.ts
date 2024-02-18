@@ -66,7 +66,7 @@ export interface ReactNativePhoneInputProps<TextComponentType extends React.Comp
      * Initial selected country
      */
     initialCountry?: string;
-    variant?: string;
+    mode?: string;
 
     /**
      * Allow user input 0 after country code
