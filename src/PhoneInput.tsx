@@ -13,6 +13,9 @@ import { TextInput} from '@jmstechnologiesinc/react-native-paper';
 /* @ts-ignore */
 import { moderateScale } from '@jmstechnologiesinc/react-native-size-matters';
 
+const PNF = require('google-libphonenumber').PhoneNumberFormat;
+const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
+
 export default class PhoneInput<TextComponentType extends React.ComponentType = typeof TextInput>
     extends React.Component<ReactNativePhoneInputProps<TextComponentType>, any> {
     static setCustomCountriesData(json) {
@@ -52,6 +55,8 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
             initialValue = countryData ? `+${countryData.dialCode}` : '';
             displayValue = initialValue;
         }
+        
+        const phone = this.getDialCodeNumber(displayValue)
 
         this.state = {
             disabled,
@@ -59,6 +64,8 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
             displayValue,
             value: initialValue,
             mode,
+            onValue: phone?.number,
+            dialCode: phone?.dialCode ? phone?.dialCode : initialValue
         };
     }
 
@@ -69,15 +76,13 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
         }
     }
 
+
     onChangePhoneNumber = (number) => {
-        const actionAfterSetState = this.props.onChangePhoneNumber
-            ? (displayValue: string, iso2: string) => {
-                this.props.onChangePhoneNumber?.(displayValue, iso2);
-            }
-            : null;
-        this.updateValue(number, actionAfterSetState);
+    
+        this.props.onChangePhoneNumber?.(this.state.dialCode +number, this.state.iso2); 
     }
 
+ 
     onPressFlag = () => {
         if (this.props.onPressFlag) {
             this.props.onPressFlag();
@@ -116,7 +121,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
     }
 
     getValue(text?) {
-        return text ? text.replace(/[^0-9]/g, '') : this.state.value;
+        return text ? text.replace(/[^0-9]/g, '') : this.state.dialCode + this.state.onValue;
     }
 
     getNumberType() {
@@ -136,6 +141,8 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
                     {
                         iso2,
                         displayValue: this.format(`+${countryData.dialCode}`),
+                        dialCode: `+${countryData.dialCode}`,
+                        onValue: '',
                         value: `+${countryData.dialCode}`
                     },
                     () => {
@@ -146,16 +153,13 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
         }
     }
 
-    setValue = (number) => {
-        if (this.state.value !== number) {
-            this.updateValue(number);
-        }
-    }
+
 
     isValidNumber() {
-        if (this.state.value.length < 4) return false;
+        let phone = this.state.value + this.state.onValue
+        if (phone.length < 4) return false;
         return PhoneNumber.isValidNumber(
-            this.state.value,
+            phone,
             this.state.iso2
         );
     }
@@ -166,74 +170,37 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
             : text;
     }
 
-    updateValue(number, actionAfterSetState: any = null) {
-        let modifiedNumber = this.getValue(number);
-        const { allowZeroAfterCountryCode } = this.props;
 
-        if (modifiedNumber[0] !== '+' && number.length) {
-            modifiedNumber = `+${modifiedNumber}`;
-        }
-        modifiedNumber = allowZeroAfterCountryCode
-            ? modifiedNumber
-            : this.possiblyEliminateZeroAfterCountryCode(modifiedNumber);
-        const iso2: string = PhoneNumber.getCountryCodeOfNumber(modifiedNumber);
-
-        let countryDialCode;
-        if (iso2) {
-            const countryData = PhoneNumber.getCountryDataByCode(iso2);
-            countryDialCode = countryData.dialCode;
-        }
-
-        let displayValue;
-        if (modifiedNumber === `+${countryDialCode}`) {
-            displayValue = modifiedNumber;
-        } else {
-            displayValue = this.format(modifiedNumber);
-        }
-
-        this.setState({
-            iso2,
-            displayValue,
-            value: modifiedNumber,
-        }, () => {
-            if (actionAfterSetState) {
-                actionAfterSetState(displayValue, iso2);
-            }
-        });
-    }
-
-    // eslint-disable-next-line class-methods-use-this
-    possiblyEliminateZeroAfterCountryCode(number) {
-        const dialCode = PhoneNumber.getDialCode(number);
-        return number.startsWith(`${dialCode}0`)
-            ? dialCode + number.substr(dialCode.length + 1)
-            : number;
-    }
 
     getAccessibilityLabel() {
         return this.props.accessibilityLabel || 'Telephone input';
     }
 
-    focus() {
-        this.inputPhone.focus();
+    getDialCodeNumber(phone) {
+        try {
+            const phoneNumber = phoneUtil.parse(phone);
+            const dialCode = '+' + phoneNumber.getCountryCode();
+            const number = phone.slice(dialCode.length);
+            return {
+                dialCode: dialCode,
+                number
+            };
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
     }
 
-    blur() {
-        this.inputPhone.blur();
-    }
+    
 
     render() {
-        const { iso2, displayValue, disabled, mode } = this.state;
-
-        
-
-       
-
+        const { iso2,  disabled, mode, onValue, dialCode } = this.state;
 
         return (    
             <>
 
                 <TextInput
+                autoFocus
                     ref={(ref) => {
                         this.inputPhone = ref;
                     }}
@@ -243,13 +210,11 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
                     editable={!disabled}
                     autoCorrect={false}
                     onChangeText={(text) => {
-                        this.onChangePhoneNumber(text);
-                        if(this.props.inputActionHandler){
-                         
-                            this.props.inputActionHandler('phone', text)
-                        }
+                        this.setState({ onValue: text });
+                        this.onChangePhoneNumber(text)
                     }}
-                    left={
+                    left={ <TextInput.Affix  text={dialCode}  textStyle={{color: 'rgb(80, 69, 57)'}} />}
+                    right={
                         <TextInput.Icon
                             onPress={this.onPressFlag}
                             icon={({ size }) => (
@@ -262,10 +227,8 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
                         />
                     }
                     keyboardType="phone-pad"
-                    value={displayValue}
+                    value={onValue}
                 />
-
-             
             </>
         );
     }
