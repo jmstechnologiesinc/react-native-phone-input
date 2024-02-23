@@ -9,6 +9,7 @@ import PhoneNumber from './PhoneNumber';
 import { ReactNativePhoneInputProps } from './typings';
 
 import { TextInput} from '@jmstechnologiesinc/react-native-paper';
+import { localized }from '@jmstechnologiesinc/react-native-components'
 
 /* @ts-ignore */
 import { moderateScale } from '@jmstechnologiesinc/react-native-size-matters';
@@ -30,7 +31,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
         super(props);
 
         let {
-            initialCountry, initialValue, mode, inputActionHandler,
+            initialCountry, initialValue, mode,
         } = this.props;
 
         const {
@@ -205,7 +206,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
                         this.inputPhone = ref;
                     }}
                     mode={mode}
-                    label={"Phone Number"}
+                    label={localized("phoneNumber")}
                     accessibilityLabel={this.getAccessibilityLabel()}
                     editable={!disabled}
                     autoCorrect={false}
