@@ -201,7 +201,6 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
             <>
 
                 <TextInput
-                autoFocus
                     ref={(ref) => {
                         this.inputPhone = ref;
                     }}
@@ -215,6 +214,7 @@ export default class PhoneInput<TextComponentType extends React.ComponentType = 
                         this.onChangePhoneNumber(text)
                     }}
                     left={ <TextInput.Affix  text={dialCode}  textStyle={{color: 'rgb(80, 69, 57)'}} />}
+                    
                     right={
                         <TextInput.Icon
                             onPress={this.onPressFlag}
