@@ -1,13 +1,13 @@
 [
   {
-      "name": "United States",
+      "name": "unitedStates",
       "iso2": "us",
       "dialCode": "1",
       "priority": 0,
       "areaCodes": null
   },
   {
-    "name": "Dominican Republic (República Dominicana)",
+    "name": "dominicanRepublic",
     "iso2": "do",
     "dialCode": "1",
     "priority": 2,
@@ -18,7 +18,7 @@
     ]
 },
   {
-      "name": "Panama (Panamá)",
+      "name": "panama",
       "iso2": "pa",
       "dialCode": "507",
       "priority": 0,
