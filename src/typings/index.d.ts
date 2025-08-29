@@ -66,6 +66,8 @@ export interface ReactNativePhoneInputProps<TextComponentType extends React.Comp
      * Initial selected country
      */
     initialCountry?: string;
+    mode?: string;
+
     /**
      * Allow user input 0 after country code
      */
@@ -146,6 +148,7 @@ export interface ReactNativePhoneInputProps<TextComponentType extends React.Comp
      * Function to be invoked when press on flag image
      */
     onPressFlag?: () => void;
+    inputActionHandler?:  (phone: string, text: string) => void
     /**
      * Custom countries list
      */

@@ -30,13 +30,12 @@ class Country {
         if (!this.countries) {
             this.countries = orderBy(
                 this.countriesData || require('./resources/countries.json'), // eslint-disable-line global-require
-                ['name'],
-                ['asc'],
-            );
+);
         }
 
         return this.countries;
     }
+    
 
     getCountryCodes() {
         if (!this.countryCodes.length) {
