@@ -167,6 +167,13 @@ export default class PhoneInput<
     }
 
     getDialCodeNumber(phone) {
+        // Avoid calling the parser with values it can never resolve
+        // (empty strings, a lone "+", etc.), which throws
+        // "The string supplied did not seem to be a phone number".
+        if (!phone || !/\d/.test(phone)) {
+            return null;
+        }
+
         try {
             const phoneNumber = phoneUtil.parse(phone);
             const dialCode = "+" + phoneNumber.getCountryCode();
@@ -176,7 +183,6 @@ export default class PhoneInput<
                 number,
             };
         } catch (error) {
-            // console.error(error);
             return null;
         }
     }
