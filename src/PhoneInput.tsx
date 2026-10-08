@@ -202,6 +202,23 @@ export default class PhoneInput<
                     editable={!disabled}
                     autoCorrect={false}
                     onChangeText={(text) => {
+                        // A whole international number already carries its code: it moves into the affix and
+                        // the flag instead of being prefixed by them again (+1+1…).
+                        const international = PhoneNumber.internationalNumber(text);
+                        if (international) {
+                            const iso2 = international.iso2 || this.state.iso2;
+                            this.setState({
+                                iso2,
+                                dialCode: international.dialCode,
+                                value: international.dialCode,
+                                onValue: international.nationalNumber,
+                            });
+                            this.props.onChangePhoneNumber?.(
+                                international.dialCode + international.nationalNumber,
+                                iso2
+                            );
+                            return;
+                        }
                         this.setState({ onValue: text });
                         this.onChangePhoneNumber(text);
                     }}

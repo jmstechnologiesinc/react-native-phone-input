@@ -74,6 +74,21 @@ class PhoneNumber {
         }
     }
 
+    // A text that already holds a whole international number ("+" and its own country code: iOS AutoFill, a paste),
+    // split into that code, its country and the national part; null for any other text.
+    internationalNumber(text) {
+        if (!text || text.trim().charAt(0) !== '+') return null;
+        const phoneInfo = this.parse(text, undefined);
+        if (!phoneInfo) return null;
+
+        const region = phoneUtil.getRegionCodeForNumber(phoneInfo);
+        return {
+            dialCode: `+${phoneInfo.getCountryCode()}`,
+            nationalNumber: phoneUtil.getNationalSignificantNumber(phoneInfo),
+            iso2: region ? region.toLowerCase() : null,
+        };
+    }
+
     isValidNumber(number, iso2) {
         const phoneInfo = this.parse(number, iso2);
 
